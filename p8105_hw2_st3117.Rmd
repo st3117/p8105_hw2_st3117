@@ -13,15 +13,17 @@ library(tidyverse)
 ## Problem 1 Table Cleaning
 ```{r}
 # import data
-transit = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+transit = 
+  read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+  select(line:route11, entry, vending, entrance_type, ada)
 
-transit = janitor::clean_names(transit)
+transit$entry = ifelse(transit$entry == "YES", yes = TRUE, no = FALSE)
 
 transit
 
-ifelse(transit$entry == "YES")
 
-select(transit, line:route11, entry, vending, entrance_type, ada)
+
 
 
 
