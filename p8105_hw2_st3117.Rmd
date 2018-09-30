@@ -11,43 +11,58 @@ library(tidyverse)
 library(p8105.datasets)
 ```
 
-## Problem 1 Table Cleaning
+## Problem 1_1 Table Cleaning
 ```{r}
-# import data
+# import and clean data
 transit = 
   read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
   gather(key = routes_number, value = routes_name, route1:route11) %>% 
   separate(routes_number, into = c("remove1", "routes_number"), sep = 5) %>% 
   filter(!is.na(routes_name)) %>% 
-  mutate(
-  entry = ifelse(entry == "YES", yes = TRUE, no = FALSE),
-  routes_served = paste(routes_number, routes_name, sep = "_")) %>% 
-  select(line:station_longitude, routes_served, entry, vending, entrance_type, ada) %>% 
+  mutate(entry = ifelse(entry == "YES", yes = TRUE, no = FALSE)) %>% 
+  select(line:station_longitude, routes_number, routes_name, entry, vending, entrance_type, ada) %>% 
   arrange(line, station_name)
 
 transit
 
-
 ```
 
 The dataset "transit" is a `r ncol(transit)` by `r nrow(transit)` table.\
-It contains line, station_name, latitude, longitude, routes_served, entry, vending, entrance_type and ADA compliance.\
-I started by importing the dataset and clean the variable names. Then, used gather function doing a wide to long transpose; used separate function getting routes_number by itself; used filter function removing “NA”s in routes_name; used ifelse function converting entry to a logical variable; combined routes_number and routes_served to a single variable routes_served as requested; seleted the variables as requested; and arrange them by line and station_name.\
+It contains line, station_name, latitude, longitude, routes_number, routes_name, entry, vending, entrance_type and ADA compliance.\
+I started by importing the dataset and clean the variable names. Then, used gather function doing a wide to long transpose; used separate function getting routes_number by itself; used filter function removing “NA”s in routes_name; used ifelse function converting entry to a logical variable; seleted the variables as requested; and arrange them by line and station_name.\
 
-It is not a tidy dataset since the routes_served encodes both routes_number and routes_served.
+This is a tidy dataset.
 
 ## Problem 1_2
 ```{r}
-transit_distinct = distinct(transit, line, station_name)
+# How many distinct stations are there?
+distinct(transit, line, station_name) %>% 
+  nrow()
 
-transit_ada = 
-  filter(transit, ada == TRUE) %>% 
-  distinct(line, station_name)
+# How many stations are ADA compliant?
+filter(transit, ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  nrow()
 
-
+# What proportion of station entrances / exits without vending allow entrance?
+count(transit, vending == "YES") %>% 
+  pull(n) %>% 
+  prop.table()
 
 ```
+
+```{r}
+filter(transit, routes_name == "A") %>% 
+  distinct(line, station_name, routes_number, routes_name) %>% 
+  nrow()
+
+filter(transit, ada == TRUE & routes_name == "A") %>% 
+  distinct(line, station_name, routes_number, routes_name) %>% 
+  nrow()
+
+```
+
 
 
 ```{r}
@@ -119,11 +134,26 @@ arrange(-n) %>%
 head(1)
 
 
+brfss_2002 = filter(brfss, year == 2002)
+
+pull(brfss, excellent) %>% 
+  median(na.rm = TRUE)
+
+
+ggplot(brfss_2002, aes(x = excellent)) + 
+  geom_histogram()
+
+
+brfss_ny = filter(brfss, county == "New York County" | county == "Queens County") %>% 
+  arrange(county, year)
+
+ggplot(brfss_ny, aes(x = year, y = prop_above_good)) + 
+  geom_point(aes(color = county))
 
 ```
 
 
-`r median(brfss$excellent, na.rm = TRUE)`
+
 
 
 ```{r}
