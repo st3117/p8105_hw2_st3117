@@ -97,11 +97,11 @@ brfss =
   brfss_smart2010 %>% 
   janitor::clean_names() %>%
   filter(topic == "Overall Health") %>% 
-  separate(locationdesc, into = c("remove2", "location_desc"), sep = 5) %>% 
-  select(year, location_abbr = locationabbr, location_desc, response, data_value) %>% 
+  separate(locationdesc, into = c("remove2", "county"), sep = 5) %>% 
+  select(year, state = locationabbr, county, response, data_value) %>% 
   spread(key = response, value = data_value) %>% 
   janitor::clean_names() %>% 
-  select(year:location_desc, excellent, very_good, good, fair, poor) %>% 
+  select(year:county, excellent, very_good, good, fair, poor) %>% 
   mutate(prop_above_good = (excellent + very_good)/(excellent + very_good + good + fair + poor))
   
 
@@ -109,6 +109,14 @@ brfss =
 
 
 ```{r}
+#How many unique locations are included in the dataset?
+location_distinct = distinct(brfss, state, county)
+
+state_distinct = distinct(brfss, state)
+
+count_state = count(location_distinct, state) %>% 
+  arrange(-n)
+
 
 ```
 
