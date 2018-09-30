@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(p8105.datasets)
 ```
 
 ## Problem 1 Table Cleaning
@@ -86,11 +87,17 @@ precipitation =
 
 precipitation
   
-?month.name
-?as.character
 
 ```
 
 
+```{r}
+
+brfss = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>%
+  
+
+```
 
 
