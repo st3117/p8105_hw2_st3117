@@ -45,7 +45,7 @@ transit_ada =
   filter(transit, ada == TRUE) %>% 
   distinct(line, station_name)
 
-  ?distinct
+
 
 ```
 
@@ -114,10 +114,19 @@ location_distinct = distinct(brfss, state, county)
 
 state_distinct = distinct(brfss, state)
 
-count_state = count(location_distinct, state) %>% 
-  arrange(-n)
+count(location_distinct, state) %>% 
+arrange(-n) %>% 
+head(1)
+
 
 
 ```
 
+
+`r median(brfss$excellent, na.rm = TRUE)`
+
+
+```{r}
+
+```
 
