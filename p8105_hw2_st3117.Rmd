@@ -37,5 +37,60 @@ I started by importing the dataset and clean the variable names. Then, used gath
 It is not a tidy dataset since the routes_served encodes both routes_number and routes_served.
 
 ## Problem 1_2
+```{r}
+transit_distinct = distinct(transit, line, station_name)
+
+transit_ada = 
+  filter(transit, ada == TRUE) %>% 
+  distinct(line, station_name)
+
+  ?distinct
+
+```
+
+
+```{r}
+
+trash = 
+  readxl::read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+                     sheet = "Mr. Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
+  janitor::clean_names() %>%
+  filter(!is.na(dumpster)) %>% 
+  mutate(
+    sports_ball = round(sports_balls) %>% 
+                  as.integer(sports_balls)
+    )
+trash
+
+```
+
+```{r}
+
+prec_2016 = 
+  readxl::read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx",
+                     sheet = "2016 Precipitation", range = "A2:B14") %>%
+  janitor::clean_names() %>%
+  mutate(year = "2016")
+                              
+prec_2017 = 
+  readxl::read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx",
+                     sheet = "2017 Precipitation", range = "A2:B14") %>%
+  janitor::clean_names() %>%
+  mutate(year = "2017") %>% 
+  filter(!is.na(total))
+
+precipitation = 
+  bind_rows(prec_2016, prec_2017) %>%
+  select(year, month, total) %>% 
+  mutate(month = month.name[month])
+
+precipitation
+  
+?month.name
+?as.character
+
+```
+
+
 
 
