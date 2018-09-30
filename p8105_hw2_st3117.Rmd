@@ -96,7 +96,19 @@ precipitation
 brfss = 
   brfss_smart2010 %>% 
   janitor::clean_names() %>%
+  filter(topic == "Overall Health") %>% 
+  separate(locationdesc, into = c("remove2", "location_desc"), sep = 5) %>% 
+  select(year, location_abbr = locationabbr, location_desc, response, data_value) %>% 
+  spread(key = response, value = data_value) %>% 
+  janitor::clean_names() %>% 
+  select(year:location_desc, excellent, very_good, good, fair, poor) %>% 
+  mutate(prop_above_good = (excellent + very_good)/(excellent + very_good + good + fair + poor))
   
+
+```
+
+
+```{r}
 
 ```
 
