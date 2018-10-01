@@ -64,22 +64,29 @@ filter(transit, ada == TRUE & routes_name == "A") %>%
 ```
 
 
-
+## Problem 2_1
 ```{r}
 
 trash = 
   readxl::read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
                      sheet = "Mr. Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
   janitor::clean_names() %>%
-  filter(!is.na(dumpster)) %>% 
+  filter(!is.na(date)) %>% 
   mutate(
     sports_ball = round(sports_balls) %>% 
                   as.integer(sports_balls)
     )
+
+#    year = ifelse(!is.na(year), year, substring(date, 1, 4)),
+
 trash
+
+    
 
 ```
 
+
+## Problem 2_2
 ```{r}
 
 prec_2016 = 
@@ -104,6 +111,20 @@ precipitation
   
 
 ```
+
+
+```{r}
+filter(trash, year == 2016) %>% 
+  pull(sports_ball) %>% 
+  median()
+```
+
+`r nrow(trash)`
+
+`r nrow(precipitation)`
+
+`r sum(prec_2017$total)`
+
 
 
 ```{r}
