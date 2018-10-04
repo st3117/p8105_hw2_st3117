@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-## Problem 1_1 NYC Transit Table Cleaning
+## Problem 1_1 NYC Transit Data Cleaning
 
 ```{r Problem 1_1, message = FALSE}
 
@@ -41,7 +41,7 @@ I started by importing the dataset and clean the variable names. Then, I used 'g
 </br>
 This is a tidy dataset.
 
-## Problem 1_2 Answer questions
+## Problem 1_2 Answer Questions
 
 * How many distinct stations are there?\
 There are `r count(distinct(transit, line, station_name))` distinct stations.\
@@ -52,7 +52,7 @@ There are `r count(distinct(transit, line, station_name))` distinct stations.\
 * What proportion of station entrances / exits without vending allow entrance?\
 `r round(count(filter(transit, vending == "NO" & entry == TRUE) %>% distinct(line, station_name))*100 /  count(filter(transit, vending == "NO") %>% distinct(line, station_name)), 2)`% station entrances / exits without vending allow entrance.
 
-## Problem 1_3 Reformat data and answer questions
+## Problem 1_3 Reformat Data and Answer Questions
 
 * How many distinct stations serve the A train?\
 There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.\
@@ -60,14 +60,16 @@ There are `r count(filter(transit, routes_name == "A") %>% distinct(line, statio
 * Of the stations that serve the A train, how many are ADA compliant?\
 `r count(filter(transit, ada == TRUE & routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` Of the stations that serve the A train are ADA compliant.
 
-## Problem 2_1
-```{r}
+## Problem 2_1 Mr. Trash Wheel Data Cleaning
 
+```{r Problem 2_1}
+
+# import and clean data
 trash = 
   readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
-                     sheet = "Mr. Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
+                     sheet = "Professor Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
   janitor::clean_names() %>%
-  filter(!is.na(date)) %>% 
+  filter(!is.na(dumpster)) %>% 
   mutate(
     sports_balls = round(sports_balls) %>% 
                    as.integer(sports_balls)
@@ -75,39 +77,39 @@ trash =
 
 #    year = ifelse(!is.na(year), year, substring(date, 1, 4)),
 
-trash
-
-    
-
 ```
 
 
-## Problem 2_2
+## Problem 2_2 Precipitation Data Cleaning
+
 ```{r}
 
+# import and clean data for 2016
 prec_2016 = 
   readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
                      sheet = "2016 Precipitation", range = "A2:B14") %>%
   janitor::clean_names() %>%
   mutate(year = "2016")
-                              
+
+# import and clean data for 2017                             
 prec_2017 = 
   readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
                      sheet = "2017 Precipitation", range = "A2:B14") %>%
   janitor::clean_names() %>%
-  mutate(year = "2017") %>% 
-  filter(!is.na(total))
+  mutate(year = "2017") 
+  
+# note: the previous dataset contains NAs for precipitation thus need ' %>% filter(!is.na(total))', but this one is complete.
 
+# combine the 2016 and 2017 datasets, and change month type
 precipitation = 
   bind_rows(prec_2016, prec_2017) %>%
   select(year, month, total) %>% 
   mutate(month = month.name[month])
 
-precipitation
-  
-
 ```
 
+
+## Problem 2_3
 
 ```{r}
 #filter(trash, year == 2016) %>% 
