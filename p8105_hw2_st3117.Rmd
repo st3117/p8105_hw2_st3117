@@ -20,7 +20,8 @@ theme_set(theme_bw() + theme(legend.position = "bottom"))
 
 ## Problem 1_1 NYC Transit Table Cleaning
 
-```{r Problem 1_1}
+```{r Problem 1_1, message = FALSE}
+
 # import and clean data
 transit = 
   read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
@@ -32,44 +33,32 @@ transit =
   select(line:station_longitude, routes_number, routes_name, entry, vending, entrance_type, ada) %>% 
   arrange(line, station_name)
 
-transit
-
 ```
 
 The dataset "transit" is a `r ncol(transit)` by `r nrow(transit)` table.\
 It contains variables including line, station_name, latitude, longitude, routes_number, routes_name, entry, vending, entrance_type and ADA compliance.\
 I started by importing the dataset and clean the variable names. Then, I used 'gather' function doing a wide to long transpose; used 'separate' function removing characters "route" from routes_number; used 'filter' function removing “NA”s in routes_name; used 'ifelse' function converting entry to a logical variable; seleted the 10 variables as requested; and arrange them by line and station_name.\
-
+</br>
 This is a tidy dataset.
 
-## Problem 1_2 Answering questions
+## Problem 1_2 Answer questions
 
 * How many distinct stations are there?\
 There are `r count(distinct(transit, line, station_name))` distinct stations.\
-
+</br>
 * How many stations are ADA compliant?\
 `r count(filter(transit, ada == TRUE) %>% distinct(line, station_name))` stations are ADA compliant.\
-
+</br>
 * What proportion of station entrances / exits without vending allow entrance?\
 `r round(count(filter(transit, vending == "NO" & entry == TRUE) %>% distinct(line, station_name))*100 /  count(filter(transit, vending == "NO") %>% distinct(line, station_name)), 2)`% station entrances / exits without vending allow entrance.
 
-## Problem 1_3
-```{r}
-filter(transit, routes_name == "A") %>% 
-  distinct(line, station_name, routes_number, routes_name) %>% 
-  nrow()
+## Problem 1_3 Reformat data and answer questions
 
-count(filter(transit, routes_name == "A") %>% 
-  distinct(line, station_name, routes_number, routes_name))
-
-filter(transit, ada == TRUE & routes_name == "A") %>% 
-  distinct(line, station_name, routes_number, routes_name) %>% 
-  nrow()
-
-count(filter(transit, ada == TRUE & routes_name == "A") %>% 
-  distinct(line, station_name, routes_number, routes_name))
-```
-
+* How many distinct stations serve the A train?\
+There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.\
+</br>
+* Of the stations that serve the A train, how many are ADA compliant?\
+`r count(filter(transit, ada == TRUE & routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` Of the stations that serve the A train are ADA compliant.
 
 ## Problem 2_1
 ```{r}
