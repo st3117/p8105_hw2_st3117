@@ -41,7 +41,7 @@ I started by importing the dataset and clean the variable names. Then, I used 'g
 </br>
 This is a tidy dataset.
 
-## Problem 1_2 Answer Questions
+## Problem 1_2 Answer Questions about Transit
 
 * How many distinct stations are there?\
 There are `r count(distinct(transit, line, station_name))` distinct stations.\
@@ -52,7 +52,7 @@ There are `r count(distinct(transit, line, station_name))` distinct stations.\
 * What proportion of station entrances / exits without vending allow entrance?\
 `r round(count(filter(transit, vending == "NO" & entry == TRUE) %>% distinct(line, station_name))*100 /  count(filter(transit, vending == "NO") %>% distinct(line, station_name)), 2)`% station entrances / exits without vending allow entrance.
 
-## Problem 1_3 Reformat Data and Answer Questions
+## Problem 1_3 Reformat Data Transit and Answer Questions
 
 * How many distinct stations serve the A train?\
 There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.\
@@ -107,7 +107,7 @@ precipitation =
 ```
 
 
-## Problem 2_3 Describe Two Datasets
+## Problem 2_3 Describe Two Datasets Trash and Precipitation
 
 ```{r Problem 2_3}
 
@@ -117,17 +117,10 @@ arrange(precipitation, -total) %>%
 
 ```
 
-After cleaning, the dataset ‘trash’ is a `r ncol(trash)` by `r nrow(trash)` (observations) table. It includes the trash weight and trash types collected by the Mr. Trash Wheel from 2017 to 2018. The key variables are weight_tons and homes_powered. From the dataset, we know that each dumpster collected `r round(mean(trash$weight_tons, na.rm = TRUE), 2)` tons on average, and they powered `r round(sum(trash$homes_powered), 2)` homes in total for the two years.\
-The dataset ‘precipitation’ is a `r ncol(precipitation)` by `r nrow(precipitation)` (observations) table. It records the monthly total precipitation from 2016 to 2017. The key variables are total_precipitation. From the dataset, we know that the monthly total percipitation is`r round(mean(precipitation$total, na.rm = TRUE), 2)` inches on average, and the highest total monthly precipitation occured in July, 2017 with 7.09 inches.\
+After cleaning, the dataset ‘trash’ is a `r ncol(trash)` by `r nrow(trash)` (observations) table. It includes the trash weight and trash types collected by the Mr. Trash Wheel from 2014 to 2018. The key variables are weight_tons and homes_powered. From the dataset, we know that each dumpster collected `r round(mean(trash$weight_tons, na.rm = TRUE), 2)` tons on average, and they powered `r round(sum(trash$homes_powered), 2)` homes in total for the past four years.\
+The dataset ‘precipitation’ is a `r ncol(precipitation)` by `r nrow(precipitation)` (observations) table. It records the monthly total precipitation from 2016 to 2017. The key variables are total_precipitation. From the dataset, we know that the monthly total percipitation is`r round(mean(precipitation$total, na.rm = TRUE), 2)` inches on average, and the highest total monthly precipitation occured in July, 2017 with 7.09 inches.
 
-## Problem 2_4 Answer Questions
-
-```{r Problem 2_4}
-filter(trash, year == 2016) %>% 
-  pull(sports_balls) %>% 
-  median(na.rm = TRUE)
-
-```
+## Problem 2_4 Answer Questions about Trash and Precipitation
 
 *  what was the total precipitation in 2017?\
 The total precipitation in 2017 are `r sum(prec_2017$total)` inches.\
@@ -135,9 +128,9 @@ The total precipitation in 2017 are `r sum(prec_2017$total)` inches.\
 * What was the median number of sports balls in a dumpster in 2016?\
 The median number of sports balls in a dumpster in 2016 are `r median(filter(trash, year == 2016) %>% pull(sports_balls), na.rm = TRUE)`.
 
+## Problem 3_1 BRFSS Data Cleaning
 
-
-```{r}
+```{r Problem 3_1}
 
 brfss = 
   brfss_smart2010 %>% 
@@ -150,36 +143,37 @@ brfss =
   select(year:county, excellent, very_good, good, fair, poor) %>% 
   mutate(above_good = excellent + very_good)
   
-brfss
 ```
 
+## Problem 3_2 Answer Questions about BRFSS
 
 ```{r}
-#How many unique locations are included in the dataset?
-location_distinct = distinct(brfss, state, county)
 
-state_distinct = distinct(brfss, state)
-
-count(location_distinct, state) %>% 
-arrange(-n) %>% 
-head(1)
-
+#  What state is observed the most?
 count(brfss, state) %>% 
 arrange(-n) %>% 
 head(1)
 
+# Make a subsets of BRFSS with year == 2002 for median calculation and plot usage
 brfss_2002 = filter(brfss, year == 2002)
 
-pull(brfss_2002, excellent) %>% 
-  median(na.rm = TRUE)
+```
 
-filter(brfss, year == 2002) %>% 
-  pull(excellent) %>% 
-  median(na.rm = TRUE)
+* How many unique locations are included in the dataset?\
+There are `r count(distinct(brfss, state, county))` unique locations included in the dataset.\
+</br>
+* Is every state represented?\
+Since there are `r count(distinct(brfss, state))` states and federal district in the dataset, all the states are included.\
+</br>
+* What state is observed the most?\
+New Jersey is observed the most with 146 times.\
+</br>
+* In 2002, what is the median of the “Excellent” response value?\
+The median of the “Excellent” response value in 2002 are `r median(filter(brfss, year == 2002) %>% pull(excellent), na.rm = TRUE)`.
 
-pull(brfss, excellent) %>% 
-  median(na.rm = TRUE)
+## Problem 3_2 Histogram
 
+```{r Problem 3_2}
 
 ggplot(brfss_2002, aes(x = excellent)) + 
   geom_histogram()
@@ -189,13 +183,19 @@ filter(brfss, year == 2002) %>%
   geom_histogram()
 
 
+
+```
+
+```{r}
 brfss_ny = filter(brfss, county == "New York County" | county == "Queens County") %>% 
   arrange(county, year)
 
 ggplot(brfss_ny, aes(x = year, y = excellent)) + 
   geom_point(aes(color = county))
-
 ```
+
+
+
 
 
 
