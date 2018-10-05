@@ -37,7 +37,7 @@ transit =
 
 The dataset "transit" is a `r ncol(transit)` by `r nrow(transit)` table.\
 It contains variables including line, station_name, latitude, longitude, routes_number, routes_name, entry, vending, entrance_type and ADA compliance.\
-I started by importing the dataset and clean the variable names. Then, I used 'gather' function doing a wide to long transpose; used 'separate' function removing characters "route" from routes_number; used 'filter' function removing “NA”s in routes_name; used 'ifelse' function converting entry to a logical variable; seleted the 10 variables as requested; and arrange them by line and station_name.\
+I started by importing the dataset and clean the variable names. Then, I used 'gather' function doing a wide to long transpose; used 'separate' function removing characters "route" from routes_number; used 'filter' function removing “NA”s in routes_name; used 'ifelse' function converting entry to a logical variable; seleted the 10 variables as requested; and arranged them by line and station_name.\
 </br>
 This is a tidy dataset.
 
@@ -58,11 +58,11 @@ There are `r count(distinct(transit, line, station_name))` distinct stations.\
 There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.\
 </br>
 * Of the stations that serve the A train, how many are ADA compliant?\
-`r count(filter(transit, ada == TRUE & routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` Of the stations that serve the A train are ADA compliant.
+`r count(filter(transit, ada == TRUE & routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` stations that serve the A train are ADA compliant.
 
 ## Problem 2_1 Mr. Trash Wheel Data Cleaning
 
-```{r Problem 2_1}
+```{r Problem 2_1, warning = FALSE}
 
 # import and clean data
 trash = 
@@ -75,7 +75,16 @@ trash =
                    as.integer(sports_balls)
     )
 
+# try the tidy form, but won't use this dataset for the analysis later
+trash_tidy = trash %>% 
+  gather(key = trash_type, value = amount, plastic_bottles:sports_balls) %>% 
+  separate(trash_type, into = c("trash_type", "unit"), sep = "_") %>% 
+  mutate(unit = ifelse(is.na(unit), yes = "units", no = unit)) %>% 
+  arrange(dumpster, year, month) %>% 
+  select(dumpster:volume_cubic_yards, trash_type:amount, homes_powered)
 ```
+
+Note: I tried to make the dataset 'trash' tidy by transposing different trash_type to a long form. However, this trash_tidy dataset contains 1-to-many relations, we can either make relational tables or using 'group_by' for the data analysis, which is not convenient at all. Thus I'll stick to the dataset 'trash'.
 
 
 ## Problem 2_2 Precipitation Data Cleaning
@@ -117,7 +126,7 @@ arrange(precipitation, -total) %>%
 
 ```
 
-After cleaning, the dataset ‘trash’ is a `r ncol(trash)` by `r nrow(trash)` (observations) table. It includes the trash weight and trash types collected by the Mr. Trash Wheel from 2014 to 2018. The key variables are weight_tons and homes_powered. From the dataset, we know that each dumpster collected `r round(mean(trash$weight_tons, na.rm = TRUE), 2)` tons on average, and they powered `r round(sum(trash$homes_powered), 2)` homes in total for the past four years.\
+After cleaning, the dataset ‘trash’ is a `r ncol(trash)` by `r nrow(trash)` (observations) table. It includes the trash weight and trash types collected by the Mr. Trash Wheel from 2014 to 2018. The key variables are weight_tons and homes_powered. From the dataset, we know that each dumpster collected `r round(mean(trash$weight_tons, na.rm = TRUE), 2)` tons on average, and they powered `r round(sum(trash$homes_powered),-2)` homes in total for the past four years.\
 The dataset ‘precipitation’ is a `r ncol(precipitation)` by `r nrow(precipitation)` (observations) table. It records the monthly total precipitation from 2016 to 2017. The key variables are total_precipitation. From the dataset, we know that the monthly total percipitation is`r round(mean(precipitation$total, na.rm = TRUE), 2)` inches on average, and the highest total monthly precipitation occured in July, 2017 with 7.09 inches.
 
 ## Problem 2_4 Answer Questions about Trash and Precipitation
@@ -168,9 +177,9 @@ New Jersey is observed the most with 146 times.\
 * In 2002, what is the median of the “Excellent” response value?\
 The median of the “Excellent” response value in 2002 are `r median(filter(brfss, year == 2002) %>% pull(excellent), na.rm = TRUE)`.
 
-## Problem 3_2 Histogram
+## Problem 3_3 Histogram
 
-```{r Problem 3_2}
+```{r Problem 3_3}
 
 filter(brfss, year == 2002) %>% 
   ggplot(aes(x = excellent)) + 
@@ -182,9 +191,9 @@ filter(brfss, year == 2002) %>%
 
 ```
 
-## Problem 3_3 Scatterplot
+## Problem 3_4 Scatterplot
 
-```{r Problem 3_3}
+```{r Problem 3_4}
 
 # Make a subsets containing only New York County and Queens County
 brfss_ny = filter(brfss, county == "New York County" | county == "Queens County") %>% 
