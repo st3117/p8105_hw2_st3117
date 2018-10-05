@@ -37,26 +37,26 @@ transit =
 
 The dataset "transit" is a `r ncol(transit)` by `r nrow(transit)` table.\
 It contains variables including line, station_name, latitude, longitude, routes_number, routes_name, entry, vending, entrance_type and ADA compliance.\
-I started by importing the dataset and clean the variable names. Then, I used 'gather' function doing a wide to long transpose; used 'separate' function removing characters "route" from routes_number; used 'filter' function removing “NA”s in routes_name; used 'ifelse' function converting entry to a logical variable; seleted the 10 variables as requested; and arranged them by line and station_name.\
-</br>
+I started by importing the dataset and clean the variable names. Then, I used 'gather' function doing a wide to long transpose; used 'separate' function removing characters "route" from routes_number; used 'filter' function removing “NA”s in routes_name; used 'ifelse' function converting entry to a logical variable; seleted the 10 variables as requested; and arranged them by line and station_name.</br>
+
 This is a tidy dataset.
 
 ## Problem 1_2 Answer Questions about Transit
 
 * How many distinct stations are there?\
-There are `r count(distinct(transit, line, station_name))` distinct stations.\
-</br>
+There are `r count(distinct(transit, line, station_name))` distinct stations.</br>
+
 * How many stations are ADA compliant?\
-`r count(filter(transit, ada == TRUE) %>% distinct(line, station_name))` stations are ADA compliant.\
-</br>
+`r count(filter(transit, ada == TRUE) %>% distinct(line, station_name))` stations are ADA compliant.</br>
+
 * What proportion of station entrances / exits without vending allow entrance?\
 `r round(count(filter(transit, vending == "NO" & entry == TRUE) %>% distinct(line, station_name))*100 /  count(filter(transit, vending == "NO") %>% distinct(line, station_name)), 2)`% station entrances / exits without vending allow entrance.
 
 ## Problem 1_3 Reformat Data Transit and Answer Questions
 
 * How many distinct stations serve the A train?\
-There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.\
-</br>
+There are `r count(filter(transit, routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` distinct stations serve the A train.</br>
+
 * Of the stations that serve the A train, how many are ADA compliant?\
 `r count(filter(transit, ada == TRUE & routes_name == "A") %>% distinct(line, station_name, routes_number, routes_name))` stations that serve the A train are ADA compliant.
 
@@ -82,10 +82,10 @@ trash_tidy = trash %>%
   mutate(unit = ifelse(is.na(unit), yes = "units", no = unit)) %>% 
   arrange(dumpster, year, month) %>% 
   select(dumpster:volume_cubic_yards, trash_type:amount, homes_powered)
+
 ```
 
 Note: I tried to make the dataset 'trash' tidy by transposing different trash_type to a long form. However, this trash_tidy dataset contains 1-to-many relations, we can either make relational tables or using 'group_by' for the data analysis, which is not convenient at all. Thus I'll stick to the dataset 'trash'.
-
 
 ## Problem 2_2 Precipitation Data Cleaning
 
@@ -115,7 +115,6 @@ precipitation =
 
 ```
 
-
 ## Problem 2_3 Describe Two Datasets Trash and Precipitation
 
 ```{r Problem 2_3}
@@ -132,8 +131,8 @@ The dataset ‘precipitation’ is a `r ncol(precipitation)` by `r nrow(precipit
 ## Problem 2_4 Answer Questions about Trash and Precipitation
 
 *  what was the total precipitation in 2017?\
-The total precipitation in 2017 are `r sum(prec_2017$total)` inches.\
-</br>
+The total precipitation in 2017 are `r sum(prec_2017$total)` inches.</br>
+
 * What was the median number of sports balls in a dumpster in 2016?\
 The median number of sports balls in a dumpster in 2016 are `r median(filter(trash, year == 2016) %>% pull(sports_balls), na.rm = TRUE)`.
 
@@ -166,27 +165,27 @@ head(1)
 ```
 
 * How many unique locations are included in the dataset?\
-There are `r count(distinct(brfss, state, county))` unique locations included in the dataset.\
-</br>
+There are `r count(distinct(brfss, state, county))` unique locations included in the dataset.</br>
+
 * Is every state represented?\
-Since there are `r count(distinct(brfss, state))` states and federal district in the dataset, all the states are included.\
-</br>
+Since there are `r count(distinct(brfss, state))` states and federal district in the dataset, all the states are included.</br>
+
 * What state is observed the most?\
-New Jersey is observed the most with 146 times.\
-</br>
+New Jersey is observed the most with 146 times.</br>
+
 * In 2002, what is the median of the “Excellent” response value?\
 The median of the “Excellent” response value in 2002 are `r median(filter(brfss, year == 2002) %>% pull(excellent), na.rm = TRUE)`.
 
 ## Problem 3_3 Histogram
 
-```{r Problem 3_3}
+```{r Problem 3_3, message = FALSE, warning = FALSE}
 
 filter(brfss, year == 2002) %>% 
   ggplot(aes(x = excellent)) + 
   geom_histogram() +
   labs(
-    title = '"Excellent" response values in the year 2002',
-    x = "“Excellent” response values",
+    title = "'Excellent' response values in the year 2002",
+    x = "'Excellent' response values",
     y = "Count")
 
 ```
@@ -204,7 +203,7 @@ ggplot(brfss_ny, aes(x = year, y = excellent, color = county)) +
   labs(
     title = "Proportion of 'Excellent' response values in New York County and Queens County each year",
     x = "Year",
-    y = 'Proportion of "Excellent" response')
+    y = "Proportion of 'Excellent' response")
 
 ```
 
