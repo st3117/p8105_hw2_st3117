@@ -67,7 +67,7 @@ There are `r count(filter(transit, routes_name == "A") %>% distinct(line, statio
 # import and clean data
 trash = 
   readxl::read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
-                     sheet = "Professor Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
+                     sheet = "Mr. Trash Wheel", range = readxl::cell_cols("A:N")) %>% 
   janitor::clean_names() %>%
   filter(!is.na(dumpster)) %>% 
   mutate(
@@ -75,14 +75,12 @@ trash =
                    as.integer(sports_balls)
     )
 
-#    year = ifelse(!is.na(year), year, substring(date, 1, 4)),
-
 ```
 
 
 ## Problem 2_2 Precipitation Data Cleaning
 
-```{r}
+```{r Problem 2_2}
 
 # import and clean data for 2016
 prec_2016 = 
@@ -109,28 +107,33 @@ precipitation =
 ```
 
 
-## Problem 2_3
+## Problem 2_3 Describe Two Datasets
 
-```{r}
-#filter(trash, year == 2016) %>% 
-#  pull(sports_balls) %>% 
-#  median()
+```{r Problem 2_3}
 
-#median(filter(trash, year == 2016) %>% trash$sports_balls)
-
-count(trash)
-count(precipitation)
-sum(prec_2017$total)
+# Find the highest total precipitation
+arrange(precipitation, -total) %>% 
+  head(1)
 
 ```
 
-`r median(filter(trash, year == 2016) %>% pull(sports_balls))`
+After cleaning, the dataset ‘trash’ is a `r ncol(trash)` by `r nrow(trash)` (observations) table. It includes the trash weight and trash types collected by the Mr. Trash Wheel from 2017 to 2018. The key variables are weight_tons and homes_powered. From the dataset, we know that each dumpster collected `r round(mean(trash$weight_tons, na.rm = TRUE), 2)` tons on average, and they powered `r round(sum(trash$homes_powered), 2)` homes in total for the two years.\
+The dataset ‘precipitation’ is a `r ncol(precipitation)` by `r nrow(precipitation)` (observations) table. It records the monthly total precipitation from 2016 to 2017. The key variables are total_precipitation. From the dataset, we know that the monthly total percipitation is`r round(mean(precipitation$total, na.rm = TRUE), 2)` inches on average, and the highest total monthly precipitation occured in July, 2017 with 7.09 inches.\
 
-`r nrow(trash)`
+## Problem 2_4 Answer Questions
 
-`r nrow(precipitation)`
+```{r Problem 2_4}
+filter(trash, year == 2016) %>% 
+  pull(sports_balls) %>% 
+  median(na.rm = TRUE)
 
-`r sum(prec_2017$total)`
+```
+
+*  what was the total precipitation in 2017?\
+The total precipitation in 2017 are `r sum(prec_2017$total)` inches.\
+</br>
+* What was the median number of sports balls in a dumpster in 2016?\
+The median number of sports balls in a dumpster in 2016 are `r median(filter(trash, year == 2016) %>% pull(sports_balls), na.rm = TRUE)`.
 
 
 
