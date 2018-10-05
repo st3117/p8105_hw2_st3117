@@ -147,15 +147,12 @@ brfss =
 
 ## Problem 3_2 Answer Questions about BRFSS
 
-```{r}
+```{r Problem 3_2}
 
 #  What state is observed the most?
 count(brfss, state) %>% 
 arrange(-n) %>% 
 head(1)
-
-# Make a subsets of BRFSS with year == 2002 for median calculation and plot usage
-brfss_2002 = filter(brfss, year == 2002)
 
 ```
 
@@ -175,23 +172,31 @@ The median of the “Excellent” response value in 2002 are `r median(filter(br
 
 ```{r Problem 3_2}
 
-ggplot(brfss_2002, aes(x = excellent)) + 
-  geom_histogram()
-
 filter(brfss, year == 2002) %>% 
   ggplot(aes(x = excellent)) + 
-  geom_histogram()
-
-
+  geom_histogram() +
+  labs(
+    title = '"Excellent" response values in the year 2002',
+    x = "“Excellent” response values",
+    y = "Count")
 
 ```
 
-```{r}
+## Problem 3_3 Scatterplot
+
+```{r Problem 3_3}
+
+# Make a subsets containing only New York County and Queens County
 brfss_ny = filter(brfss, county == "New York County" | county == "Queens County") %>% 
   arrange(county, year)
 
-ggplot(brfss_ny, aes(x = year, y = excellent)) + 
-  geom_point(aes(color = county))
+ggplot(brfss_ny, aes(x = year, y = excellent, color = county)) + 
+  geom_point(size = 4) +
+  labs(
+    title = "Proportion of 'Excellent' response values in New York County and Queens County each year",
+    x = "Year",
+    y = 'Proportion of "Excellent" response')
+
 ```
 
 
